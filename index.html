@@ -1,10 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<input lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>$Title$</title>
+    <title>Man Looking at Other Woman Meme Generator</title>
+
+    <style type="text/css">
+    </style>
+
 </head>
 <body>
-$END$
+<div>
+    <div>
+        <h1>Man Looking at Other Woman Meme Generator</h1>
+
+        <input id="man" value="Man"/>
+        <input id="woman" , value="Woman"/>
+        <input id="otherWoman" value="Other Woman"/>
+
+        <button onclick="make_base(
+            document.getElementById('man').value, 
+            document.getElementById('woman').value, 
+            document.getElementById('otherWoman').value
+        )">
+            Make my meme!
+        </button>
+    </div>
+    <div>
+        <canvas id="meme" height="440" width="782"/>
+
+        <script>
+            var canvas = document.getElementById('meme'),
+                context = canvas.getContext('2d');
+
+            make_base("Man", "Woman", "Other Woman");
+
+            function drawMultiLines(x, y, text) {
+                var split = text.split(" ");
+                var lines = [];
+                var currentLine = [];
+
+                split.forEach(function (word, index) {
+                    currentLine.push(word);
+
+                    if (context.measureText(currentLine.reduce(
+                            function (accum, next) {
+                                return accum + ' ' + next;
+                            })
+                        ).width > 140) {
+
+                        currentLine.pop();
+                        lines.push(currentLine);
+                        currentLine = [word];
+                    }
+
+                    if (index == split.length - 1) {
+                        lines.push(currentLine);
+                    }
+                });
+
+                lines = lines.map(function (line) {
+                    return line.reduce(function (accum, next) {
+                        return accum + ' ' + next;
+                    })
+                });
+
+
+                context.fillStyle = "#FFFFFF";
+                context.fillRect(x, y, 150, 30 * lines.length);
+
+                context.fillStyle = "#000000";
+
+                var currentX = x + 5;
+                var currentY = y + 20;
+                lines.forEach(function (line) {
+                    context.fillText(line, currentX, currentY, 200);
+                    currentY += 25;
+                });
+            }
+
+            function make_base(man, woman, otherWoman) {
+                base_image = new Image();
+                base_image.src = './manlookingmeme_base.png';
+                base_image.onload = function () {
+                    context.drawImage(base_image, 0, 0, 782, 440);
+                    context.font = '20px serif';
+
+                    drawMultiLines(425, 150, man);
+                    drawMultiLines(625, 250, woman);
+                    drawMultiLines(100, 300, otherWoman);
+
+                }
+            }
+        </script>
+    </div>
+    <div>
+        <a id="download">Download!</a>
+
+        <script>
+            document.getElementById('download').addEventListener('click', function () {
+                downloadCanvas(this, 'meme', 'meme.png');
+            }, false);
+
+            function downloadCanvas(link, canvasId, filename) {
+                link.href = document.getElementById(canvasId).toDataURL();
+                link.download = filename;
+            }
+        </script>
+    </div>
+</div>
 </body>
 </html>
